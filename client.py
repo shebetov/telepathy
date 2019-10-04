@@ -1,7 +1,6 @@
 from audio import AudioPlayer, AudioRecorderCM
 from utils import *
 import time
-import socket
 from nclient import Client
 
 
@@ -34,7 +33,7 @@ class TelepathyClient:
     def process_messages_loop(self):
         while True:
             if self.pending_messages:
-                self.process_bytes(self.pending_messages.pop(0))
+                self.process_bytes(self.pending_messages.pop(0), None)
             else:
                 time.sleep(0.1)
 
