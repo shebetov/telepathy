@@ -69,16 +69,18 @@ class Server:
                     user = self.clients[notified_socket]
 
                     if message != b"ping":
-                        print(f'Received message from {user["data"].decode("utf-8")}: {message["data"]}')
+                        print(f'< {user["data"].decode("utf-8")}: {message["data"]}')
 
                         # Iterate over connected clients and broadcast message
                         for client_socket in self.clients:
 
                             # But don't sent it to sender
                             if client_socket != notified_socket:
-                                client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
+                                msg = user['header'] + user['data'] + message['header'] + message['data']
                             else:
-                                client_socket.send(prepare_message(b"pong"))
+                                msg = prepare_message(b"pong")
+                            print(f'> {msg}')
+                            client_socket.send(msg)
 
             # It's not really necessary to have this, but will handle some socket exceptions just in case
             for notified_socket in exception_sockets:
