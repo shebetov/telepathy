@@ -81,7 +81,7 @@ class Server:
 
                             # But don't sent it to sender
                             if client_socket != notified_socket:
-                                msg = user['header'] + user['data'] + message['header'] + message['data']
+                                msg = prepare_message(user['data'] + message['data'])
                             else:
                                 msg = prepare_message(b"pong")
                             logger.info(f'> {msg}')
