@@ -31,6 +31,7 @@ class TelepathyClient:
     def socket_handler(self, message):
         if message == b"pong": return
         print(f"client({self.user_id}) <- {message}")
+        if len(message) == 3: return
         self.process_bytes(message, None)
 
     @threaded

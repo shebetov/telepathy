@@ -76,8 +76,6 @@ class Server:
                     user = self.clients[notified_socket]
 
                     if message != b"ping":
-                        logger.info(f'< {user["data"].decode("utf-8")}: {message["data"]}')
-
                         # Iterate over connected clients and broadcast message
                         for client_socket in self.clients:
 
