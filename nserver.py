@@ -2,6 +2,7 @@ import socket
 import select
 import time
 from utils import threaded, clean_port
+import logging
 
 
 HEADER_LENGTH = 5
@@ -19,11 +20,14 @@ class Server:
     def receive_message(client_socket):
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
+            logging.debug(f"< {message_header}")
             if not len(message_header):
                 return False
 
             message_length = int(message_header.decode('utf-8').strip())
-            return {'header': message_header, 'data': client_socket.recv(message_length)}
+            message_data = client_socket.recv(message_length)
+            logging.debug(f"< {message_data}")
+            return {'header': message_header, 'data': message_data}
         except:
             return False
 
