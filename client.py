@@ -6,8 +6,8 @@ from nclient import Client
 
 
 CHUNK_SIZE = 4096
-SERVER_IP = "192.168.100.6"
-SERVER_PORT = 1234
+SERVER_IP = "46.101.142.225"
+SERVER_PORT = 41234
 
 
 contacts = [

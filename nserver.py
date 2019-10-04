@@ -6,7 +6,7 @@ from utils import threaded
 
 HEADER_LENGTH = 5
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 1234
+SERVER_PORT = 41234
 
 
 def prepare_message(bytes_data):
