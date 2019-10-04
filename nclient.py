@@ -36,9 +36,12 @@ class Client():
             try:
                 # send msg or ping
                 if self.pending_messages:
-                    self.socket.send(prepare_message(self.pending_messages.pop(0)))
+                    msg = prepare_message(self.pending_messages.pop(0))
+                    print(f"> {msg}")
+                    self.socket.send(msg)
 
                 message_header = self.socket.recv(HEADER_LENGTH)
+                print(f"< {message_header}")
 
                 if not len(message_header):
                     print('Connection closed by the server')
@@ -46,6 +49,7 @@ class Client():
 
                 message_length = int(message_header.decode('utf-8').strip())
                 message = self.socket.recv(message_length)
+                print(f"< {message}")
                 self.handler(message)
             except IOError as e:
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
