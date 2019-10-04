@@ -31,8 +31,7 @@ class TelepathyClient:
     def socket_handler(self, message):
         if message == b"pong": return
         print(f"< {message}")
-        audio_data = message[3:]
-        self.process_bytes(audio_data, None)
+        self.process_bytes(message, None)
 
     @threaded
     def start_record(self):
