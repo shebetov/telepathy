@@ -2,7 +2,10 @@ import socket
 import select
 import time
 from utils import threaded, clean_port
-import logging
+from logger import setup_logger
+
+
+logger = setup_logger("telepathy_server", "./logs.txt")
 
 
 HEADER_LENGTH = 5
@@ -20,13 +23,13 @@ class Server:
     def receive_message(client_socket):
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
-            logging.debug(f"< {message_header}")
+            logger.debug(f"< {message_header}")
             if not len(message_header):
                 return False
 
             message_length = int(message_header.decode('utf-8').strip())
             message_data = client_socket.recv(message_length)
-            logging.debug(f"< {message_data}")
+            logger.debug(f"< {message_data}")
             return {'header': message_header, 'data': message_data}
         except:
             return False
@@ -44,7 +47,7 @@ class Server:
         self.clients = {}
 
         self.listen_loop()
-        print(f'Listening for connections on {self.server_ip}:{self.server_port}...')
+        logger.info(f'Listening for connections on {self.server_ip}:{self.server_port}...')
 
     @threaded
     def listen_loop(self):
@@ -61,11 +64,11 @@ class Server:
 
                     self.sockets_list.append(client_socket)
                     self.clients[client_socket] = user_msg
-                    print('Accepted new connection from {}:{}, user_id: {}'.format(*client_address, user_msg['data'].decode('utf-8')))
+                    logger.info('Accepted new connection from {}:{}, user_id: {}'.format(*client_address, user_msg['data'].decode('utf-8')))
                 else:
                     message = self.receive_message(notified_socket)
                     if message is False:
-                        print('Closed connection from: {}'.format(self.clients[notified_socket]['data'].decode('utf-8')))
+                        logger.info('Closed connection from: {}'.format(self.clients[notified_socket]['data'].decode('utf-8')))
                         self.sockets_list.remove(notified_socket)
                         del self.clients[notified_socket]
                         continue
@@ -73,7 +76,7 @@ class Server:
                     user = self.clients[notified_socket]
 
                     if message != b"ping":
-                        print(f'< {user["data"].decode("utf-8")}: {message["data"]}')
+                        logger.info(f'< {user["data"].decode("utf-8")}: {message["data"]}')
 
                         # Iterate over connected clients and broadcast message
                         for client_socket in self.clients:
@@ -83,7 +86,7 @@ class Server:
                                 msg = user['header'] + user['data'] + message['header'] + message['data']
                             else:
                                 msg = prepare_message(b"pong")
-                            print(f'> {msg}')
+                            logger.info(f'> {msg}')
                             client_socket.send(msg)
 
             # It's not really necessary to have this, but will handle some socket exceptions just in case
