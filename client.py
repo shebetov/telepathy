@@ -25,13 +25,22 @@ class TelepathyClient:
         self.audio_player = AudioPlayer()
         self.user_id = user_id
         self.frames = {112: []}
+        self.pending_messages = []
 
+        self.process_messages_loop()
         self.client = Client(SERVER_IP, SERVER_PORT, self.user_id, lambda message: self.socket_handler(message))
+
+    @threaded
+    def process_messages_loop(self):
+        while True:
+            if self.pending_messages:
+                self.process_bytes(self.pending_messages.pop(0))
+            else:
+                time.sleep(0.1)
 
     def socket_handler(self, message):
         if message == b"pong": return
-        print(f"< {message}")
-        self.process_bytes(message, None)
+        self.pending_messages.append(message)
 
     @threaded
     def start_record(self):
