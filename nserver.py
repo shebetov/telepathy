@@ -1,7 +1,7 @@
 import socket
 import select
 import time
-from utils import threaded
+from utils import threaded, clean_port
 
 
 HEADER_LENGTH = 5
@@ -90,5 +90,6 @@ class Server:
 
 
 if __name__ == '__main__':
+    clean_port(SERVER_PORT)
     s = Server(SERVER_IP, SERVER_PORT)
     time.sleep(100)
