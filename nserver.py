@@ -92,4 +92,4 @@ class Server:
 if __name__ == '__main__':
     clean_port(SERVER_PORT)
     s = Server(SERVER_IP, SERVER_PORT)
-    time.sleep(100)
+    time.sleep(999999)

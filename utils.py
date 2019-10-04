@@ -14,7 +14,7 @@ def threaded(func):
 def clean_port(port):
     s = subprocess.getoutput('lsof -i :%i'%(port))
     try:
-        p_id = re.findall('.*?gunicorn\s+[0-9]{4,7}', s)[0].split(' ')[-1]
+        p_id = re.findall('.*?python\s+[0-9]{4,7}', s)[0].split(' ')[-1]
     except IndexError:
         p_id = None
     p_id = int(p_id) if p_id else None
