@@ -6,7 +6,7 @@ from nclient import Client
 
 
 CHUNK_SIZE = 4096
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "192.168.100.6"
 SERVER_PORT = 1234
 
 
