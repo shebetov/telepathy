@@ -23,13 +23,13 @@ class Server:
     def receive_message(client_socket):
         try:
             message_header = client_socket.recv(HEADER_LENGTH)
-            logger.debug(f"< {message_header}")
+            logger.debug(f"< {time.time()}  {message_header}")
             if not len(message_header):
                 return False
 
             message_length = int(message_header.decode('utf-8').strip())
             message_data = client_socket.recv(message_length)
-            logger.debug(f"< {message_data}")
+            logger.debug(f"< {time.time()} {message_data}")
             return {'header': message_header, 'data': message_data}
         except:
             return False
@@ -52,7 +52,7 @@ class Server:
     @threaded
     def broadcast_message(self, client_sockets, bytes_message):
         for client_socket in client_sockets:
-            logger.info(f'> {bytes_message}')
+            logger.info(f'> {time.time()} {bytes_message}')
             client_socket.send(bytes_message)
 
     @threaded

@@ -80,9 +80,10 @@ class AudioPlayer:
 
 
 def test_audio_recorder():
+    frames = []
     with AudioRecorderCM() as rec:
         while True:
-            print(rec.read_stream())
+            frames.append(rec.read_stream())
 
 
 def test_audio_player():
@@ -91,4 +92,4 @@ def test_audio_player():
 
 
 if __name__ == '__main__':
-    test_audio_player()
+    test_audio_recorder()
