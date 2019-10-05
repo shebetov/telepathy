@@ -39,6 +39,9 @@ class Client():
                     msg = prepare_message(self.pending_send_messages.pop(0))
                     print(f"> {time.time()} {msg}")
                     self.socket.send(msg)
+                    self.socket.setblocking(True)
+                else:
+                    self.socket.setblocking(False)
 
                 message_header = self.socket.recv(HEADER_LENGTH)
                 print(f"< {time.time()}  {message_header}")

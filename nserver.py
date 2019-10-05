@@ -49,7 +49,6 @@ class Server:
         self.listen_loop()
         logger.info(f'Listening for connections on {self.server_ip}:{self.server_port}...')
 
-    @threaded
     def broadcast_message(self, client_sockets, bytes_message):
         for client_socket in client_sockets:
             logger.info(f'> {time.time()} {bytes_message}')
@@ -82,8 +81,8 @@ class Server:
                     user = self.clients[notified_socket]
 
                     if message != b"ping":
-                        self.broadcast_message([client_socket for client_socket in self.clients if client_socket != notified_socket], prepare_message(message["data"]))
-                        self.broadcast_message([client_socket for client_socket in self.clients if client_socket == notified_socket], prepare_message(b"ping"))
+                        self.broadcast_message([notified_socket], prepare_message(b"pong"))
+                        threaded(self.broadcast_message)([client_socket for client_socket in self.clients if client_socket != notified_socket], prepare_message(message["data"]))
 
             for notified_socket in exception_sockets:
                 self.sockets_list.remove(notified_socket)
