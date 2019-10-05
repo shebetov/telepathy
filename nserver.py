@@ -50,6 +50,12 @@ class Server:
         logger.info(f'Listening for connections on {self.server_ip}:{self.server_port}...')
 
     @threaded
+    def broadcast_message(self, client_sockets, bytes_message):
+        for client_socket in client_sockets:
+            logger.info(f'> {bytes_message}')
+            client_socket.send(bytes_message)
+
+    @threaded
     def listen_loop(self):
         while True:
             read_sockets, _, exception_sockets = select.select(self.sockets_list, [], self.sockets_list)
@@ -76,23 +82,11 @@ class Server:
                     user = self.clients[notified_socket]
 
                     if message != b"ping":
-                        # Iterate over connected clients and broadcast message
-                        for client_socket in self.clients:
+                        self.broadcast_message([client_socket for client_socket in self.clients if client_socket != notified_socket], prepare_message(message["data"]))
+                        self.broadcast_message([client_socket for client_socket in self.clients if client_socket == notified_socket], prepare_message(b"ping"))
 
-                            # But don't sent it to sender
-                            if client_socket != notified_socket:
-                                msg = prepare_message(message['data'])
-                            else:
-                                msg = prepare_message(b"pong")
-                            logger.info(f'> {msg}')
-                            client_socket.send(msg)
-
-            # It's not really necessary to have this, but will handle some socket exceptions just in case
             for notified_socket in exception_sockets:
-                # Remove from list for socket.socket()
                 self.sockets_list.remove(notified_socket)
-
-                # Remove from our list of users
                 del self.clients[notified_socket]
 
 

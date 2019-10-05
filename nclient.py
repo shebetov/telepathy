@@ -20,7 +20,7 @@ class Client():
         self.server_port = server_port
         self.user_id = user_id
         self.handler = handler
-        self.pending_messages = []
+        self.pending_send_messages = []
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.server_ip, self.server_port))
@@ -35,8 +35,8 @@ class Client():
         while True:
             try:
                 # send msg or ping
-                if self.pending_messages:
-                    msg = prepare_message(self.pending_messages.pop(0))
+                if self.pending_send_messages:
+                    msg = prepare_message(self.pending_send_messages.pop(0))
                     print(f"> {msg}")
                     self.socket.send(msg)
 
@@ -58,7 +58,7 @@ class Client():
                     sys.exit()
 
     def send_bytes(self, bytes_data):
-        self.pending_messages.append(bytes_data)
+        self.pending_send_messages.append(bytes_data)
 
 
 if __name__ == '__main__':
