@@ -4,13 +4,11 @@ import sys
 from utils import threaded
 import time
 import logging
+from ncommon import send_message, receive_message
 
 
 HEADER_LENGTH = 5
-
-
-def prepare_message(bytes_data):
-    return f"{len(bytes_data):<{HEADER_LENGTH}}".encode('utf-8') + bytes_data
+logger = logging.getLogger("telepathy_client")
 
 
 class Client():
@@ -26,7 +24,7 @@ class Client():
         self.socket.connect((self.server_ip, self.server_port))
         self.socket.setblocking(False)  # .recv() call won;t block, just return some exception we'll handle
 
-        self.socket.send(prepare_message(str(self.user_id).encode('utf-8')))
+        send_message(self.socket, str(self.user_id).encode('utf-8'))
 
         self.listen_loop()
 
@@ -36,28 +34,22 @@ class Client():
             try:
                 # send msg or ping
                 if self.pending_send_messages:
-                    msg = prepare_message(self.pending_send_messages.pop(0))
-                    print(f"> {time.time()} {msg}")
-                    self.socket.send(msg)
+                    send_message(self.socket, self.pending_send_messages.pop(0))
                     self.socket.setblocking(True)
                 else:
                     self.socket.setblocking(False)
 
-                message_header = self.socket.recv(HEADER_LENGTH)
-                print(f"< {time.time()}  {message_header}")
-
-                if not len(message_header):
-                    print('Connection closed by the server')
-                    sys.exit()
-
-                message_length = int(message_header.decode('utf-8').strip())
-                message = self.socket.recv(message_length)
-                print(f"< {time.time()}  {message}")
-                self.handler(message)
+                message_data = receive_message(self.socket)
+                #if not message_data:
+                #    logger.info('Connection closed by the server')
+                #    sys.exit()
+                if message_data:
+                    self.handler(message_data)
             except IOError as e:
+                logger.error(e, exc_info=True)
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
-                    logging.error(e, exc_info=True)
-                    print('Reading error: {}'.format(str(e)))
+                    logger.error(e, exc_info=True)
+                    logger.info('Reading error: {}'.format(str(e)))
                     sys.exit()
 
     def send_bytes(self, bytes_data):
@@ -66,7 +58,7 @@ class Client():
 
 if __name__ == '__main__':
     def hand(message):
-        print(message)
+        logger.info(message)
     c = Client("127.0.0.1", 1234, 111, hand)
     c.send_bytes(b"allo")
     time.sleep(3)
