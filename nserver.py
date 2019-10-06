@@ -61,7 +61,7 @@ class Server:
 
                     if message != b"ping":
                         self.broadcast_message([notified_socket], b"pong")
-                        threaded(self.broadcast_message)([client_socket for client_socket in self.clients if client_socket != notified_socket], message)
+                        #threaded(self.broadcast_message)([client_socket for client_socket in self.clients if client_socket != notified_socket], message)
 
             for notified_socket in exception_sockets:
                 self.sockets_list.remove(notified_socket)
