@@ -25,7 +25,13 @@ def receive_message(from_socket):
 
         message_length = int(message_header.decode('utf-8').strip())
         logger.warning(message_length)
-        message_data = from_socket.recv(message_length)
+        message_data = b""
+        while True:
+            logger.debug(message_data)
+            logger.debug(len(message_data))
+            message_data += from_socket.recv(message_length - len(message_data))
+            if len(message_data) == message_length:
+                break
         logger.debug(f"< {time.time()} {len(message_data)} {message_data}")
         return message_data
     except:
