@@ -50,6 +50,7 @@ class Server:
                     self.clients[client_socket] = user_msg
                     logger.info('Accepted new connection from {}:{}, user_id: {}'.format(*client_address, user_msg.decode('utf-8')))
                 else:
+                    notified_socket.set_blocking(True)
                     message = receive_message(notified_socket)
                     if message is False:
                         logger.info('Closed connection from: {}'.format(self.clients[notified_socket].decode('utf-8')))
