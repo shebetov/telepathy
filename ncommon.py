@@ -24,6 +24,7 @@ def receive_message(from_socket):
             return False
 
         message_length = int(message_header.decode('utf-8').strip())
+        logger.warning(message_length)
         message_data = from_socket.recv(message_length)
         logger.debug(f"< {time.time()} {len(message_data)} {message_data}")
         return message_data
