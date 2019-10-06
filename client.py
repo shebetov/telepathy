@@ -6,7 +6,6 @@ logger = setup_logger("telepathy_client", "./client.log")
 from nclient import Client
 
 
-CHUNK_SIZE = 4096
 SERVER_IP = "46.101.142.225"
 #SERVER_IP = "localhost"
 SERVER_PORT = 8888

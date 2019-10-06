@@ -3,10 +3,10 @@ import wave
 import sys
 
 
-CHUNK = 1024
+CHUNK = 512
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 44100
+RATE = 20000
 
 
 def record_to_file(filename, channels, rate, frames):
