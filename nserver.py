@@ -8,7 +8,7 @@ from ncommon import send_message, receive_message
 
 logger = setup_logger("telepathy_server", "./server.log")
 SERVER_IP = "46.101.142.225"
-SERVER_IP = "localhost"
+#SERVER_IP = "localhost"
 SERVER_PORT = 8888
 
 
