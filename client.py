@@ -66,7 +66,7 @@ class TelepathyClient:
 
 
 if __name__ == '__main__':
-    if True:
+    if False:
         c = TelepathyClient(user_id=113)
         c.is_online = True
         time.sleep(9999)
