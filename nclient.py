@@ -35,23 +35,17 @@ class Client():
                 # send msg or ping
                 if self.pending_send_messages:
                     logger.debug(len(self.pending_send_messages))
-                    print("c1")
                     send_message(self.socket, self.pending_send_messages.pop(0))
-                    print("c2")
                     self.socket.setblocking(True)
                 else:
                     self.socket.setblocking(False)
 
-                print("c3")
                 message_data = receive_message(self.socket)
-                print("c4")
                 #if not message_data:
                 #    logger.info('Connection closed by the server')
                 #    sys.exit()
                 if message_data:
                     self.handler(message_data)
-                print("c5")
-                time.sleep(0.1)
             except IOError as e:
                 logger.error(e, exc_info=True)
                 if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
