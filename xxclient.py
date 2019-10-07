@@ -61,15 +61,17 @@ def run_test(n):
 
 TIMES = 1
 N = 3
-NMESSAGES = 2000
+NMESSAGES = 200
 
 
 if __name__ == '__main__':
     start = time.time()
     for _ in range(TIMES):
         with concurrent.futures.ProcessPoolExecutor(max_workers=N) as e:
+            klk = []
             for _ in range(N):
-                e.submit(run_test, NMESSAGES)
+                klk.append(e.submit(run_test, NMESSAGES))
+    print(klk[0].__dict__)
     end = time.time()
     duration = end - start
     print(NMESSAGES * N * TIMES, 'in', duration)
