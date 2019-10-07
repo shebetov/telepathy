@@ -97,7 +97,7 @@ if __name__ == '__main__':
         PRINT = 0
 
     unix = False
-    addr = args.addr.split(':')
+    addr = ["46.101.142.225", "8888"]
     addr[1] = int(addr[1])
     addr = tuple(addr)
 

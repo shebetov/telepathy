@@ -10,56 +10,32 @@ import time
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--msize', default=1000, type=int,
-                        help='message size in bytes')
-    parser.add_argument('--mpr', default=1, type=int,
-                        help='messages per request')
-    parser.add_argument('--num', default=200000, type=int,
-                        help='number of messages')
-    parser.add_argument('--times', default=1, type=int,
-                        help='number of times to run the test')
-    parser.add_argument('--workers', default=3, type=int,
-                        help='number of workers')
-    parser.add_argument('--addr', default='127.0.0.1:25000', type=str,
-                        help='address:port of echoserver')
-    parser.add_argument('--ssl', default=False, action='store_true')
-    args = parser.parse_args()
 
-    client_context = None
-    if args.ssl:
-        print('with SSL')
-        client_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        if hasattr(client_context, 'check_hostname'):
-            client_context.check_hostname = False
-        client_context.verify_mode = ssl.CERT_NONE
+    print('with SSL')
+    client_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    if hasattr(client_context, 'check_hostname'):
+        client_context.check_hostname = False
+    client_context.verify_mode = ssl.CERT_NONE
 
     unix = False
-    if args.addr.startswith('file:'):
-        unix = True
-        addr = args.addr[5:]
-    else:
-        addr = args.addr.split(':')
-        addr[1] = int(addr[1])
-        addr = tuple(addr)
+    addr = ["46.101.142.225", "8888"]
+    addr[1] = int(addr[1])
+    addr = tuple(addr)
     print('will connect to: {}'.format(addr))
 
-    MSGSIZE = args.msize
-    REQSIZE = MSGSIZE * args.mpr
+    msize = 1000
+    mpr = 1
+    MSGSIZE = msize
+    REQSIZE = MSGSIZE * mpr
 
     msg = b'x' * (MSGSIZE - 1) + b'\n'
-    if args.mpr:
-        msg *= args.mpr
+    msg *= mpr
 
     def run_test(n):
         print('Sending', NMESSAGES, 'messages')
-        if args.mpr:
-            n //= args.mpr
+        n //= mpr
 
-        if unix:
-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        else:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -81,9 +57,9 @@ if __name__ == '__main__':
                 nrecv += len(resp)
             n -= 1
 
-    TIMES = args.times
-    N = args.workers
-    NMESSAGES = args.num
+    TIMES = 1
+    N = 3
+    NMESSAGES = 200000
     start = time.time()
     for _ in range(TIMES):
         with concurrent.futures.ProcessPoolExecutor(max_workers=N) as e:
