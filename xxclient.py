@@ -61,7 +61,7 @@ def run_test(n):
 
 TIMES = 1
 N = 3
-NMESSAGES = 200000
+NMESSAGES = 2000
 
 
 if __name__ == '__main__':

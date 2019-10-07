@@ -3,6 +3,7 @@ import gc
 import socket
 import ssl
 import uvloop
+import time
 
 
 PRINT = 0
@@ -16,6 +17,7 @@ class EchoProtocol(asyncio.Protocol):
         self.transport = None
 
     def data_received(self, data):
+        print(time.time())
         self.transport.write(data)
 
 
