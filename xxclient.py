@@ -5,6 +5,7 @@
 import socket
 import ssl
 import time
+from utils import threaded
 from audio import AudioPlayer, AudioRecorderCM
 
 
@@ -29,22 +30,27 @@ def run_test(ttt):
     sock = client_context.wrap_socket(sock)
     sock.connect((SERVER_IP, SERVER_PORT))
 
-    with AudioRecorderCM() as rec:
-        player = AudioPlayer()
-        while True:
-            st = time.time()
-            if ttt:
+    rec = AudioRecorderCM()
+    rec.__enter__()
+    player = AudioPlayer()
+
+    @threaded
+    def vvsend():
+        try:
+            while True:
                 sock.sendall(rec.read_stream())
-            else:
+        except Exception as e:
+            print(e)
+
+    def vvrecive():
+        try:
+            while True:
                 player.play_bytes(sock.recv(1024))
-            #nrecv_target = 4096
-            #nrecv = 0
-            #while nrecv < nrecv_target:
-            #    resp = sock.recv(nrecv_target)
-            #    if not resp:
-            #        raise SystemExit()
-            #    nrecv += len(resp)
-            #print(time.time() - st)
+        except Exception as e:
+            print(e)
+
+    vvsend()
+    vvrecive()
 
 
 if __name__ == '__main__':
