@@ -1,16 +1,13 @@
 import asyncio
 import gc
-import socket
 import ssl
-import uvloop
 import time
-
-
-PRINT = 0
+import uvloop
 
 
 class EchoProtocol(asyncio.Protocol):
     def connection_made(self, transport):
+        print(transport.__dict__)
         self.transport = transport
 
     def connection_lost(self, exc):
@@ -30,16 +27,11 @@ async def print_debug(loop):
 
 if __name__ == '__main__':
     loop = uvloop.new_event_loop()
-    print('using UVLoop')
-
     asyncio.set_event_loop(loop)
     loop.set_debug(False)
 
-    PRINT = 1
-
     if hasattr(loop, 'print_debug_info'):
         loop.create_task(print_debug(loop))
-        PRINT = 0
 
     unix = False
     addr = ["46.101.142.225", "8888"]
@@ -48,22 +40,16 @@ if __name__ == '__main__':
 
     print('serving on: {}'.format(addr))
 
-    print('with SSL')
     server_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
     server_context.load_cert_chain('ssl_cert.pem', 'ssl_key.pem')
     if hasattr(server_context, 'check_hostname'):
         server_context.check_hostname = False
     server_context.verify_mode = ssl.CERT_NONE
 
-    print('using simple protocol')
-    protocol = EchoProtocol
-    coro = loop.create_server(protocol, *addr, ssl=server_context)
-    print("1")
-    srv = loop.run_until_complete(coro)
-    print("2")
+    coro = loop.create_server(EchoProtocol, *addr, ssl=server_context)
+    loop.run_until_complete(coro)
     try:
         loop.run_forever()
-        print("3")
     finally:
         if hasattr(loop, 'print_debug_info'):
             gc.collect()
