@@ -65,7 +65,7 @@ async def echo_client_streams(reader, writer):
 
 class EchoProtocol(asyncio.Protocol):
     def connection_made(self, transport):
-        self.f = open("xt.txt", "w")
+        self.f = open("/home/alex/telepathy/xt.txt", "w")
         self.transport = transport
 
     def connection_lost(self, exc):
