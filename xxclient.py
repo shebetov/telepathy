@@ -42,7 +42,7 @@ def run_test():
             #    if not resp:
             #        raise SystemExit()
             #    nrecv += len(resp)
-            print(time.time() - st)
+            #print(time.time() - st)
 
 
 if __name__ == '__main__':
