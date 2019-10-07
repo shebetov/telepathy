@@ -126,11 +126,7 @@ if __name__ == '__main__':
     if args.ssl:
         print('with SSL')
         server_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        server_context.load_cert_chain(
-            (pathlib.Path(__file__).parent.parent.parent /
-                'tests' / 'certs' / 'ssl_cert.pem'),
-            (pathlib.Path(__file__).parent.parent.parent /
-                'tests' / 'certs' / 'ssl_key.pem'))
+        server_context.load_cert_chain('ssl_cert.pem', 'ssl_key.pem')
         if hasattr(server_context, 'check_hostname'):
             server_context.check_hostname = False
         server_context.verify_mode = ssl.CERT_NONE
