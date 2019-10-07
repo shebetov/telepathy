@@ -83,94 +83,42 @@ async def print_debug(loop):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--uvloop', default=False, action='store_true')
-    parser.add_argument('--streams', default=False, action='store_true')
-    parser.add_argument('--proto', default=False, action='store_true')
-    parser.add_argument('--addr', default='127.0.0.1:25000', type=str)
-    parser.add_argument('--print', default=False, action='store_true')
-    parser.add_argument('--ssl', default=False, action='store_true')
-    args = parser.parse_args()
-
-    if args.uvloop:
-        import uvloop
-        loop = uvloop.new_event_loop()
-        print('using UVLoop')
-    else:
-        loop = asyncio.new_event_loop()
-        print('using asyncio loop')
+    import uvloop
+    loop = uvloop.new_event_loop()
+    print('using UVLoop')
 
     asyncio.set_event_loop(loop)
     loop.set_debug(False)
 
-    if args.print:
-        PRINT = 1
+    PRINT = 1
 
     if hasattr(loop, 'print_debug_info'):
         loop.create_task(print_debug(loop))
         PRINT = 0
 
     unix = False
-    if args.addr.startswith('file:'):
-        unix = True
-        addr = args.addr[5:]
-        if os.path.exists(addr):
-            os.remove(addr)
-    else:
-        addr = args.addr.split(':')
-        addr[1] = int(addr[1])
-        addr = tuple(addr)
+    addr = args.addr.split(':')
+    addr[1] = int(addr[1])
+    addr = tuple(addr)
 
     print('serving on: {}'.format(addr))
 
-    server_context = None
-    if args.ssl:
-        print('with SSL')
-        server_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        server_context.load_cert_chain('ssl_cert.pem', 'ssl_key.pem')
-        if hasattr(server_context, 'check_hostname'):
-            server_context.check_hostname = False
-        server_context.verify_mode = ssl.CERT_NONE
+    print('with SSL')
+    server_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    server_context.load_cert_chain('ssl_cert.pem', 'ssl_key.pem')
+    if hasattr(server_context, 'check_hostname'):
+        server_context.check_hostname = False
+    server_context.verify_mode = ssl.CERT_NONE
 
-    if args.streams:
-        if args.proto:
-            print('cannot use --stream and --proto simultaneously')
-            exit(1)
-
-        print('using asyncio/streams')
-        if unix:
-            coro = asyncio.start_unix_server(echo_client_streams,
-                                             addr, loop=loop,
-                                             ssl=server_context)
-        else:
-            coro = asyncio.start_server(echo_client_streams,
-                                        *addr, loop=loop,
-                                        ssl=server_context)
-        srv = loop.run_until_complete(coro)
-    elif args.proto:
-        if args.streams:
-            print('cannot use --stream and --proto simultaneously')
-            exit(1)
-
-        print('using simple protocol')
-        protocol = EchoProtocol
-
-        if unix:
-            coro = loop.create_unix_server(protocol, addr,
-                                           ssl=server_context)
-        else:
-            coro = loop.create_server(protocol, *addr,
-                                      ssl=server_context)
-        srv = loop.run_until_complete(coro)
-    else:
-        if args.ssl:
-            print('cannot use SSL for loop.sock_* methods')
-            exit(1)
-
-        print('using sock_recv/sock_sendall')
-        loop.create_task(echo_server(loop, addr, unix))
+    print('using simple protocol')
+    protocol = EchoProtocol
+    coro = loop.create_server(protocol, *addr, ssl=server_context)
+    print("1")
+    srv = loop.run_until_complete(coro)
+    print("2")
     try:
         loop.run_forever()
+        print("3")
     finally:
         if hasattr(loop, 'print_debug_info'):
             gc.collect()
