@@ -6,7 +6,7 @@ import sys
 CHUNK = 512
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 20000
+RATE = 8000
 
 
 def record_to_file(filename, channels, rate, frames):

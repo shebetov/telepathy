@@ -12,7 +12,7 @@ SERVER_IP = "46.101.142.225"
 SERVER_PORT = 8888
 
 
-def run_test():
+def run_test(ttt):
     print(f'will connect to {SERVER_IP}:{SERVER_PORT}')
 
     # SSL
@@ -33,8 +33,10 @@ def run_test():
         player = AudioPlayer()
         while True:
             st = time.time()
-            #sock.sendall(rec.read_stream())
-            player.play_bytes(sock.recv(1024))
+            if ttt:
+                sock.sendall(rec.read_stream())
+            else:
+                player.play_bytes(sock.recv(1024))
             #nrecv_target = 4096
             #nrecv = 0
             #while nrecv < nrecv_target:
@@ -46,4 +48,4 @@ def run_test():
 
 
 if __name__ == '__main__':
-    run_test()
+    run_test(False)
