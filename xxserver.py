@@ -71,8 +71,6 @@ class EchoProtocol(asyncio.Protocol):
         self.transport = None
 
     def data_received(self, data):
-        with open("xxx.txt", "w") as f:
-            f.write(data + "\n")
         self.transport.write(data)
 
 
@@ -107,7 +105,7 @@ if __name__ == '__main__':
     if args.print:
         PRINT = 1
 
-    if hasattr(loop, 'print_debug_info'):
+    if True or hasattr(loop, 'print_debug_info'):
         loop.create_task(print_debug(loop))
         PRINT = 0
 
