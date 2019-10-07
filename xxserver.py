@@ -65,15 +65,14 @@ async def echo_client_streams(reader, writer):
 
 class EchoProtocol(asyncio.Protocol):
     def connection_made(self, transport):
-        self.f = open("/home/alex/telepathy/xt.txt", "w")
         self.transport = transport
 
     def connection_lost(self, exc):
         self.transport = None
 
     def data_received(self, data):
-        self.f.write("ok")
-        #self.transport.write(data)
+        print("ok")
+        self.transport.write(data)
 
 
 async def print_debug(loop):
