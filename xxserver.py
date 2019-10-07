@@ -71,7 +71,8 @@ class EchoProtocol(asyncio.Protocol):
         self.transport = None
 
     def data_received(self, data):
-        print(data)
+        with open("xxx.txt", "w") as f:
+            f.write(data + "\n")
         self.transport.write(data)
 
 
