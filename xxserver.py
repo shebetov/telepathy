@@ -11,13 +11,14 @@ class EchoProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         print(transport.get_extra_info('peername'))
         self.all_transports.append(transport)
+        print(self.all_transports)
         self.transport = transport
 
     def connection_lost(self, exc):
         self.transport = None
 
     def data_received(self, data):
-        print(time.time())
+        #print(time.time())
         self.transport.write(data)
 
 
