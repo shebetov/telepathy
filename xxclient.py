@@ -33,7 +33,7 @@ def run_test():
         player = AudioPlayer()
         while True:
             st = time.time()
-            sock.sendall(rec.read_stream())
+            #sock.sendall(rec.read_stream())
             player.play_bytes(sock.recv(1024))
             #nrecv_target = 4096
             #nrecv = 0
