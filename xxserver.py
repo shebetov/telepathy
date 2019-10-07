@@ -6,11 +6,14 @@ import uvloop
 
 
 class EchoProtocol(asyncio.Protocol):
+    n = 0
     all_transports = []
 
     def connection_made(self, transport):
         print(transport.get_extra_info('peername'))
         self.all_transports.append(transport)
+        self.i_to = 1 if self.n == 0 else 0
+        self.n += 1
         self.transport = transport
 
     def connection_lost(self, exc):
@@ -19,7 +22,7 @@ class EchoProtocol(asyncio.Protocol):
     def data_received(self, data):
         #print(time.time())
         if len(self.all_transports) > 1:
-            self.all_transports[1].write(data)
+            self.all_transports[self.i_to].write(data)
         #self.transport.write(data)
 
 

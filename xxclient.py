@@ -34,18 +34,40 @@ def run_test(ttt):
     rec.__enter__()
     player = AudioPlayer()
 
+    in_data = []
+    out_data = []
+
+    @threaded
+    def vvrecord():
+        try:
+            while True:
+                out_data.append(rec.read_stream())
+        except Exception as e:
+            print(e)
+
     @threaded
     def vvsend():
         try:
             while True:
-                sock.sendall(rec.read_stream())
+                if out_data:
+                    sock.sendall(out_data.pop(0))
         except Exception as e:
             print(e)
 
+    @threaded
     def vvrecive():
         try:
             while True:
-                player.play_bytes(sock.recv(1024))
+                in_data.append(sock.recv(1024))
+        except Exception as e:
+            print(e)
+
+    @threaded
+    def vvplay():
+        try:
+            while True:
+                if in_data:
+                    player.play_bytes(in_data.pop(0))
         except Exception as e:
             print(e)
 
