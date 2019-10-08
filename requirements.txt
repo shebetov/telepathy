@@ -1,3 +1,9 @@
 pyaudio
 uvloop
 PyInstaller
+python-for-android
+buildozer
+
+#pip uninstall pycrypto
+#pip install pycryptodome
+PyCrypto
