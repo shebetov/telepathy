@@ -4,10 +4,10 @@
 title = My Application
 
 # (str) Package name
-package.name = myapp
+package.name = voices
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = org.voices
 
 # (str) Source code where the main.py live
 source.dir = .
