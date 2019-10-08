@@ -1,9 +1,11 @@
-pyaudio
 uvloop
 PyInstaller
 python-for-android
 buildozer
 
+# pip install PyAudio-0.2.11-cp37-cp37m-win32.whl
+# pyaudio
+
 #pip uninstall pycrypto
 #pip install pycryptodome
-PyCrypto
+pycryptodome
