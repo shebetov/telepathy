@@ -11,7 +11,6 @@ __version__ = "0.1.1"
 SERVER_IP = "178.128.206.199"
 SERVER_PORT = 8888
 
-
 def run_test(ttt):
     print(f'will connect to {SERVER_IP}:{SERVER_PORT}')
 
