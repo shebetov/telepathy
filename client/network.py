@@ -1,10 +1,6 @@
-# Copied with minimal modifications from curio
-# https://github.com/dabeaz/curio
-
-
 import asyncio
 import ssl
-from utils import threaded
+from server.utils import threaded
 from client.audio import AudioPlayer, AudioRecorderCM
 
 

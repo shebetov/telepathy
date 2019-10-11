@@ -1,6 +1,5 @@
 import pyaudio
 import wave
-import sys
 
 
 CHUNK = 512

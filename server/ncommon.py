@@ -1,5 +1,5 @@
 import time
-from logger import setup_logger
+from server.logger import setup_logger
 
 
 logger = setup_logger("telepathy_server", "./logs.txt")
