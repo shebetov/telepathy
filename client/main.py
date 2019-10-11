@@ -21,6 +21,7 @@ class ClientProtocol(asyncio.Protocol):
         print('connecting to {} port {}'.format(*transport.get_extra_info('peername')))
 
     def data_received(self, data):
+        print("< " + data.decode())
         global in_audio_data
         in_audio_data += data
 
@@ -44,7 +45,9 @@ def main():
                 break
         while True:
             try:
-                server_transport.write(audio_recorder.read_stream())
+                rec_data = audio_recorder.read_stream()
+                print("> " + rec_data.decode())
+                server_transport.write(rec_data)
             except Exception as e:
                 print(e)
 
