@@ -15,8 +15,8 @@ cmd = [
     '--noconfirm',
     '-F',
     '--distpath=%s' % os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'),
-    '--key=4rbY65y79V6b9Hb64j5m',
-    'xxclient.py',
+    #'--key=4rbY65y79V6b9Hb64j5m',
+    'network.py',
 ]
 
 print("pyinstaller " + " ".join(cmd))

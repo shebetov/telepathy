@@ -10,8 +10,8 @@ class EchoProtocol(asyncio.Protocol):
 
     def connection_made(self, transport):
         print(transport.get_extra_info('peername'))
+        self.i = len(self.all_transports)
         self.all_transports.append(transport)
-        self.i_to = 1 if len(self.all_transports) == 1 else 0
         self.transport = transport
 
     def connection_lost(self, exc):
@@ -19,10 +19,15 @@ class EchoProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         print("< " + str(len(data)))
-        if len(self.all_transports) > 1:
-            t = self.all_transports[self.i_to]
-            print(f"send_to {self.transport.get_extra_info('peername')} > {t.get_extra_info('peername')} [{self.i_to}]")
-            t.write(data)
+        for i, t in enumerate(self.all_transports):
+            if i == self.i: continue
+            print(f"send_to {self.transport.get_extra_info('peername')}[{self.i}] > {t.get_extra_info('peername')}")
+            t1 = time.time()
+            try:
+                t.write(data)
+            except Exception as e:
+                print(e)
+            print(f"write in {time.time() - t1}")
 
 
 async def print_debug(loop):
