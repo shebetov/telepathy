@@ -21,7 +21,7 @@ class EchoProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         #print(time.time())
-        print("< " + data.decode())
+        print("< " + str(data))
         if len(self.all_transports) > 1:
             self.all_transports[self.i_to].write(data)
         #self.transport.write(data)
