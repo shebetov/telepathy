@@ -20,11 +20,11 @@ class EchoProtocol(asyncio.Protocol):
         self.transport = None
 
     def data_received(self, data):
-        #print(time.time())
-        print("< " + str(data))
+        print("< " + str(len(data)))
         if len(self.all_transports) > 1:
-            self.all_transports[self.i_to].write(data)
-        #self.transport.write(data)
+            t = self.all_transports[self.i_to]
+            print(f"send_to {self.transport.get_extra_info('peername')} > {t.get_extra_info('peername')} [{self.i_to}]")
+            t.write(data)
 
 
 async def print_debug(loop):
