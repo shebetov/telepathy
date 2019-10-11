@@ -2,7 +2,7 @@
 # https://github.com/dabeaz/curio
 
 
-import socket
+import asyncio
 import ssl
 from utils import threaded
 from client.audio import AudioPlayer, AudioRecorderCM
@@ -10,70 +10,71 @@ from client.audio import AudioPlayer, AudioRecorderCM
 __version__ = "0.1.1"
 SERVER_IP = "178.128.206.199"
 SERVER_PORT = 8888
+server_transport = None
+in_audio_data = b""
 
-def run_test(ttt):
+
+class ClientProtocol(asyncio.Protocol):
+    def connection_made(self, transport):
+        global server_transport
+        server_transport = transport
+        print('connecting to {} port {}'.format(*transport.get_extra_info('peername')))
+
+    def data_received(self, data):
+        global in_audio_data
+        in_audio_data += data
+
+    def connection_lost(self, exc):
+        print('The server closed the connection')
+        global server_transport
+        server_transport.close()
+        super().connection_lost(exc)
+
+
+def main():
     print(f'will connect to {SERVER_IP}:{SERVER_PORT}')
-
-    # SSL
-    client_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-    if hasattr(client_context, 'check_hostname'):
-        client_context.check_hostname = False
-    client_context.verify_mode = ssl.CERT_NONE
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-    except (OSError, NameError):
-        pass
-    sock = client_context.wrap_socket(sock)
-    sock.connect((SERVER_IP, SERVER_PORT))
-
-    rec = AudioRecorderCM()
-    rec.__enter__()
-    player = AudioPlayer()
-
-    in_data = []
-    out_data = []
-
-    @threaded
-    def vvrecord():
-        try:
-            while True:
-                out_data.append(rec.read_stream())
-        except Exception as e:
-            print(e)
+    audio_recorder = AudioRecorderCM()
+    audio_recorder.__enter__()
+    audio_player = AudioPlayer()
 
     @threaded
     def vvsend():
-        try:
-            while True:
-                if out_data:
-                    sock.sendall(out_data.pop(0))
-        except Exception as e:
-            print(e)
-
-    @threaded
-    def vvrecive():
-        try:
-            while True:
-                in_data.append(sock.recv(1024))
-        except Exception as e:
-            print(e)
+        while True:
+            if server_transport is not None:
+                break
+        while True:
+            try:
+                server_transport.write(audio_recorder.read_stream())
+            except Exception as e:
+                print(e)
 
     @threaded
     def vvplay():
-        try:
-            while True:
-                if in_data:
-                    player.play_bytes(in_data.pop(0))
-        except Exception as e:
-            print(e)
+        global in_audio_data
+        while True:
+            try:
+                if len(in_audio_data) != 0:
+                    audio_player.play_bytes(in_audio_data)
+                    in_audio_data = b""
+            except Exception as e:
+                print(e)
 
-    vvrecord()
     vvsend()
-    vvrecive()
     vvplay()
+
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    if hasattr(ssl_context, 'check_hostname'):
+        ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
+    loop = asyncio.get_event_loop()
+    coro = loop.create_connection(ClientProtocol, SERVER_IP, SERVER_PORT)#, ssl=ssl_context)
+    try:
+        loop.run_until_complete(coro)
+        loop.run_forever()
+    finally:
+        loop.close()
 
 
 if __name__ == '__main__':
-    run_test(False)
+    main()

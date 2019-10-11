@@ -54,7 +54,7 @@ if __name__ == '__main__':
         server_context.check_hostname = False
     server_context.verify_mode = ssl.CERT_NONE
 
-    coro = loop.create_server(EchoProtocol, *addr, ssl=server_context)
+    coro = loop.create_server(EchoProtocol, *addr)#, ssl=server_context)
     loop.run_until_complete(coro)
     try:
         loop.run_forever()
