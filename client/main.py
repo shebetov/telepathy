@@ -8,7 +8,7 @@ from utils import threaded
 from client.audio import AudioPlayer, AudioRecorderCM
 
 __version__ = "0.1.1"
-SERVER_IP = "46.101.142.225"
+SERVER_IP = "178.128.206.199"
 SERVER_PORT = 8888
 
 

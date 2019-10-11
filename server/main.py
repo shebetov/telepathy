@@ -42,7 +42,7 @@ if __name__ == '__main__':
         loop.create_task(print_debug(loop))
 
     unix = False
-    addr = ["46.101.142.225", "8888"]
+    addr = ["178.128.206.199", "8888"]
     addr[1] = int(addr[1])
     addr = tuple(addr)
 

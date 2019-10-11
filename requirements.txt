@@ -1,6 +1,11 @@
 uvloop
 PyInstaller
 python-for-android
+cython
+
+#sudo apt update
+#sudo apt install -y git zip unzip openjdk-8-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake
+#export PATH=$PATH:~/.local/bin/
 buildozer
 
 # pip install PyAudio-0.2.11-cp37-cp37m-win32.whl
